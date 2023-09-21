@@ -16,6 +16,14 @@ const (
 	MINUTES    = "MINUTES"
 )
 
+func GetAllUserRoles() []string {
+	return []string{ADMIN, REGULAR}
+}
+
+func GetAllActivityTypes() []string {
+	return []string{OCCURRENCE, COUNT, MINUTES}
+}
+
 type User struct {
 	gorm.Model
 	Id       string `gorm:"primary_key"`

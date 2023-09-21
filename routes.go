@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"prg-tracker/api"
+	"prg-tracker/data"
 	"prg-tracker/services"
 )
 
@@ -38,21 +39,26 @@ func InitRoutes(root *gin.Engine, dependencies *Dependencies) {
 	activityApi := dependencies.ActivityApi
 	activityLogApi := dependencies.ActivityLogApi
 	apiGroup := root.Group("api/v1/")
-	apiGroup.GET("users/:id", userApi.GetUser)
-	apiGroup.GET("/users", userApi.GetAllUsers)
-	apiGroup.POST("/users", userApi.CreateUser)
-	apiGroup.PUT("/users/:id", userApi.UpdateUser)
-	apiGroup.DELETE("/users/:id", userApi.DeleteUser)
 
-	apiGroup.GET("activities/:activityId", activityApi.GetActivity)
-	apiGroup.GET("/activities", activityApi.GetAllActivities)
-	apiGroup.POST("/activities", activityApi.CreateActivity)
-	apiGroup.PUT("/activities/:activityId", activityApi.UpdateActivity)
-	apiGroup.DELETE("/activities/:activityId", activityApi.DeleteActivity)
+	requireAdmin := requireSpecificRole(data.ADMIN, dependencies.UserService)
+	requireRegular := requireSpecificRole(data.REGULAR, dependencies.UserService)
 
-	apiGroup.GET("activities/:activityId/log/:logId", activityLogApi.GetActivityLog)
-	apiGroup.GET("/activities/:activityId/log", activityLogApi.GetAllActivityLogs)
-	apiGroup.POST("/activities/:activityId/log", activityLogApi.CreateActivityLog)
-	apiGroup.PUT("/activities/:activityId/log/:logId", activityLogApi.UpdateActivityLog)
-	apiGroup.DELETE("/activities/:activityId/log/:logId", activityLogApi.DeleteActivityLog)
+	apiGroup.GET("/users/:id", requireAdmin, userApi.GetUser)
+	apiGroup.GET("/users", requireAdmin, userApi.GetAllUsers)
+	apiGroup.POST("/users", requireAdmin, userApi.CreateUser)
+	apiGroup.PUT("/users/:id", requireAdmin, userApi.UpdateUser)
+	apiGroup.DELETE("/users/:id", requireAdmin, userApi.DeleteUser)
+
+	apiGroup.GET("/activities/:activityId", requireRegular, activityApi.GetActivity)
+	apiGroup.GET("/activities", requireRegular, activityApi.GetAllActivities)
+	apiGroup.POST("/activities", requireRegular, activityApi.CreateActivity)
+	apiGroup.PUT("/activities/:activityId", requireRegular, activityApi.UpdateActivity)
+	apiGroup.DELETE("/activities/:activityId", requireRegular, activityApi.DeleteActivity)
+
+	apiGroup.GET("/activities/:activityId/log/:logId", requireRegular, activityLogApi.GetActivityLog)
+	apiGroup.GET("/activities/:activityId/log", requireRegular, activityLogApi.GetAllActivityLogs)
+	apiGroup.POST("/activities/:activityId/log", requireRegular, activityLogApi.CreateActivityLog)
+	apiGroup.PUT("/activities/:activityId/log/:logId", requireRegular, activityLogApi.UpdateActivityLog)
+	apiGroup.DELETE("/activities/:activityId/log/:logId", requireRegular, activityLogApi.DeleteActivityLog)
+
 }

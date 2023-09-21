@@ -71,8 +71,8 @@ func ValidateUserInDto(dto data.UserInDto) error {
 		return errors.New("password is not in the valid format")
 	}
 	role := dto.Role
-	if role != data.ADMIN && role != data.REGULAR {
-		return errors.New("Role is not valid. Possible values: [ADMIN, REGULAR]")
+	if err := ValidateUserRole(role); err != nil {
+		return err
 	}
 	return nil
 }
@@ -99,6 +99,24 @@ func ValidateUsernameForUser(id, username string, service *UserService) error {
 	}
 	if userByUsername.Id != id {
 		return errors.New("provided username is already in use")
+	}
+	return nil
+}
+
+func ValidateUserRole(userRole string) error {
+	for _, t := range data.GetAllUserRoles() {
+		if t != userRole {
+			return errors.New("none existing User Role was provided")
+		}
+	}
+	return nil
+}
+
+func ValidateActivityType(activityType string) error {
+	for _, t := range data.GetAllActivityTypes() {
+		if t != activityType {
+			return errors.New("none existing Activity Type was provided")
+		}
 	}
 	return nil
 }

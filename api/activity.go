@@ -59,6 +59,10 @@ func (ac *ActivityApi) CreateActivity(c *gin.Context) {
 		c.JSON(400, data.BasicResponse{Message: "Activity with provided name already exists"})
 		return
 	}
+	if err := services.ValidateActivityType(activityDto.Type); err != nil {
+		c.JSON(400, data.BasicResponse{Message: err.Error()})
+		return
+	}
 	createdActivity := ac.Service.Create(*userId, data.Activity{
 		Name: activityDto.Name,
 		Type: activityDto.Type,
@@ -89,6 +93,10 @@ func (ac *ActivityApi) UpdateActivity(c *gin.Context) {
 	}
 	if !ac.Service.IsNameUniqueForUpdate(activityId, *userId, activityDto.Name) {
 		c.JSON(400, data.BasicResponse{Message: "Activity with provided name already exists"})
+		return
+	}
+	if err := services.ValidateActivityType(activityDto.Type); err != nil {
+		c.JSON(400, data.BasicResponse{Message: err.Error()})
 		return
 	}
 	update, updateError := ac.Service.Update(activityId, activityDto)
