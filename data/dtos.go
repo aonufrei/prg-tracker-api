@@ -6,6 +6,20 @@ type BasicResponse struct {
 	Message string `json:"message"`
 }
 
+type LoginInDto struct {
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+}
+
+type LoginOutDto struct {
+	Token string `json:"token"`
+}
+
+type AuthData struct {
+	UserId         string    `json:"user_id"`
+	ExpirationDate time.Time `json:"expiration_date"`
+}
+
 type UserOutDto struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
