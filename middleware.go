@@ -1,10 +1,20 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"prg-tracker/data"
 	"prg-tracker/services"
 )
+
+func createCorsConfig() gin.HandlerFunc {
+	return cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Content-Type"},
+		AllowCredentials: true,
+	})
+}
 
 func getUserFromRequest(c *gin.Context, userService services.UserService) (*data.User, error) {
 	token := c.GetHeader(services.AuthHeader)

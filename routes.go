@@ -42,6 +42,9 @@ func InitRoutes(root *gin.Engine, dependencies *Dependencies) {
 	userApi := dependencies.UserApi
 	activityApi := dependencies.ActivityApi
 	activityLogApi := dependencies.ActivityLogApi
+
+	root.Use(createCorsConfig())
+
 	apiGroup := root.Group("api/v1/")
 
 	apiGroup.POST("/login", loginApi.Login)

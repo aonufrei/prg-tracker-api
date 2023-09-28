@@ -23,6 +23,9 @@ func ProcessLoginRequest(request data.LoginInDto, service *UserService) (string,
 	providedUsername := *request.Username
 	providedPassword := *request.Password
 	user := service.GetByUsername(providedUsername)
+	if user == nil {
+		return "", errors.New("user not found")
+	}
 	authorized := user.Password == providedPassword
 	if !authorized {
 		return "", errors.New("unauthorized")
